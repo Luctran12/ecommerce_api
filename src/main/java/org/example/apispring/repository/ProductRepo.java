@@ -41,4 +41,8 @@ public interface ProductRepo extends MongoRepository<Product, String> {
     @Query("{ 'name': { $regex: ?0, $options: 'i' } }")
     List<Product> findByNameIgnoreCase(String name);
 
+    @Query("{ 'name': { $regex: ?0, $options: 'i' } }")
+    List<Product> findByNameRegex(String regexPattern);
+
+
 }

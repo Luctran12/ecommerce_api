@@ -1,7 +1,9 @@
 package org.example.apispring.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.apispring.dto.request.ProductCreationReq;
 import org.example.apispring.dto.request.ProductUpdateReq;
+import org.example.apispring.dto.response.ProductDetailResponse;
 import org.example.apispring.dto.response.ProductResponse;
 import org.example.apispring.mapper.ProductMapper;
 import org.example.apispring.model.Category;
@@ -17,11 +19,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -40,7 +48,10 @@ public class ProductService {
     @Autowired
     private ProductCustomRepo productCustomRepo;
 
-    public ProductResponse createProduct(ProductCreationReq req) {
+    @Autowired
+    private FileStorageService fileStorageService;
+
+    public ProductResponse createProduct(ProductCreationReq req) throws IOException {
         Store store = storeRepo.findById(req.getStoreId()).orElseThrow(() -> new RuntimeException("Store not found"));
 
         Category category;
@@ -73,6 +84,23 @@ public class ProductService {
         product.setStore(store);
         product.setCategory(category); // Gán category đã tìm được hoặc mới tạo
 
+        //save product's image
+
+        List<String> images = new ArrayList<>();
+
+        if(req.getImages() != null && !req.getImages().isEmpty()){
+            for(MultipartFile imageFile : req.getImages()) {
+                try{
+                    String imageUrl = fileStorageService.uploadImage(imageFile);
+                    images.add(imageUrl);
+                }catch (IOException e){
+                    log.error("====> image service error: {}", e.getMessage());
+                }
+            }
+        }
+
+        product.setImageUrl(images);
+
         // Lưu sản phẩm vào database
         Product savedProduct = productRepo.save(product);
 
@@ -97,16 +125,16 @@ public class ProductService {
                 .description(product.getDescription())
                 .price(product.getPrice())
                 .stock(product.getStock())
-                .store(product.getStore())
+                .storeId(product.getStore().getId())
                 .category(product.getCategory())
                 .imageUrl(product.getImageUrl())
                 .rating(product.getRating())
                 .build());
     }
 
-    public ProductResponse getProduct(String id) {
+    public ProductDetailResponse getProductDetail(String id) {
         Product product = productRepo.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
-        return productMapper.toProductResponse(product);
+        return productMapper.toProductDetailResponse(product);
     }
 
     public ProductResponse updateProduct(ProductUpdateReq req) {
@@ -123,16 +151,39 @@ public class ProductService {
         if(req.getPrice() != 0){
             product.setPrice(req.getPrice());
         }
+        if(req.getImage() != null && !req.getImage().isEmpty()) {
+            product.setImageUrl(req.getImage());
+        }
         productRepo.save(product);
         return productMapper.toProductResponse(product);
     }
 
-    public List<ProductResponse> searchProducts(String name) {
-        List<Product> products = productRepo.findByNameIgnoreCase(name);
-        List<ProductResponse> responses = new ArrayList<>();
-        for (Product product : products) {
-            responses.add(productMapper.toProductResponse(product));
-        }
-        return responses;
+    // Hàm chuẩn hóa chuỗi tiếng Việt
+    private String normalizeString(String str) {
+        String normalized = Normalizer.normalize(str, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(normalized)
+                .replaceAll("")
+                .toLowerCase()
+                .replaceAll("đ", "d");
     }
+
+    public List<ProductResponse> searchProducts(String name) {
+        String keyword = normalizeString(name);
+
+        // Lấy toàn bộ sản phẩm từ MongoDB
+        List<Product> products = productRepo.findAll();
+
+        // Lọc lại danh sách bằng Java
+        List<Product> filteredProducts = products.stream()
+                .filter(product -> normalizeString(product.getName()).contains(keyword))
+                .collect(Collectors.toList());
+
+        // Chuyển đổi sang DTO
+        return filteredProducts.stream()
+                .map(productMapper::toProductResponse)
+                .collect(Collectors.toList());
+    }
+
+
 }

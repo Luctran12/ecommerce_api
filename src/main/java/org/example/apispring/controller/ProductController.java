@@ -3,6 +3,7 @@ package org.example.apispring.controller;
 import org.example.apispring.dto.ApiResponse;
 import org.example.apispring.dto.request.ProductCreationReq;
 import org.example.apispring.dto.request.ProductUpdateReq;
+import org.example.apispring.dto.response.ProductDetailResponse;
 import org.example.apispring.dto.response.ProductResponse;
 import org.example.apispring.model.Product;
 import org.example.apispring.service.ProductService;
@@ -10,16 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/shop/product")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
     @Autowired
     private ProductService productService;
 
     @PostMapping("/create")
-    public ApiResponse<ProductResponse> create(@RequestBody ProductCreationReq product) {
+    public ApiResponse<ProductResponse> create(@ModelAttribute ProductCreationReq product) throws IOException {
         return ApiResponse.<ProductResponse>builder()
                 .data(productService.createProduct(product))
                 .build();
@@ -38,9 +41,9 @@ public class ProductController {
     }
 
     @GetMapping("/get/{id}")
-    public ApiResponse<ProductResponse> getProduct(@PathVariable String id) {
-        return ApiResponse.<ProductResponse>builder()
-                .data(productService.getProduct(id))
+    public ApiResponse<ProductDetailResponse> getProduct(@PathVariable String id) {
+        return ApiResponse.<ProductDetailResponse>builder()
+                .data(productService.getProductDetail(id))
                 .build();
     }
 

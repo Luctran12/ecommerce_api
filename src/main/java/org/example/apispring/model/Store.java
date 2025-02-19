@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "stores")
@@ -25,7 +26,7 @@ public class Store {
     @DBRef
     private User owner; // Chủ cửa hàng
 
-    @DBRef
-    private List<Product> products; // Danh sách sản phẩm của cửa hàng
+    @DBRef(lazy = true)
+    private List<Product> products = new ArrayList<>(); // Danh sách sản phẩm của cửa hàng
 }
 
