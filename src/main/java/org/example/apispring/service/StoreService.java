@@ -71,4 +71,8 @@ public class StoreService {
         store.getProducts().remove(productRepo.findById(productId).get());
         return storeMapper.toStoreResponse(storeRepo.save(store));
     }
+
+    public Store getByUserId(String userId) {
+        return storeRepo.findByOwner_Id(userId);
+    }
 }

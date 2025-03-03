@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StoreRepo extends MongoRepository<Store, String> {
+    Store findByOwner_Id(String ownerId);
 }

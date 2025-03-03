@@ -21,6 +21,10 @@ public class Product {
     private String name;
     private String description;
     private double price;
+    private int height;
+    private int weight;
+    private int length;
+    private int width;
     @Nullable
     private List<String> imageUrl = new ArrayList<>();
 

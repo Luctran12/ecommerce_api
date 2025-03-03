@@ -12,6 +12,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/shop/store")
+@CrossOrigin(origins = "http://localhost:3000")
 public class StoreController {
     @Autowired
     private StoreService storeService;
@@ -22,7 +23,7 @@ public class StoreController {
     }
 
     @PostMapping("/addProductToStore")
-    public ApiResponse<StoreResponse> addProductToStore(@RequestParam String storeId, @RequestBody ProductCreationReq req) throws IOException {
+    public ApiResponse<StoreResponse> addProductToStore(@RequestParam String storeId, @ModelAttribute ProductCreationReq req) throws IOException {
         return ApiResponse.<StoreResponse>builder()
                 .data(storeService.addProductToStore(storeId, req))
                 .build();
@@ -34,4 +35,6 @@ public class StoreController {
                 .data(storeService.deleteProductFromStore(storeId, productId))
                 .build();
     }
+
+
 }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/shop/cart")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
 
     @Autowired
@@ -28,4 +29,7 @@ public class CartController {
                 .data(cartService.addProductToCart(userId, cartItemRequest))
                 .build();
     }
+
+//    @PostMapping("/remove")
+//    public ApiResponse<CartResponse> updateItemInCart(@RequestParam String userId, @RequestBody CartItemRequest cartItemRequest) {}
 }

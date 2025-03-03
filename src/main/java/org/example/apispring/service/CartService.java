@@ -31,6 +31,7 @@ public class CartService {
 
     @Autowired
     private CartMapper cartMapper;
+
     @Autowired
     private ProductRepo productRepo;
 
@@ -133,6 +134,7 @@ public class CartService {
             // Cập nhật số lượng sản phẩm
             CartItem item = existingItem.get();
             item.setQuantity(item.getQuantity() + cartItemReq.getQuantity());
+            cartItemRepo.save(item);
         } else {
             // Tạo mới CartItem và lưu vào database trước
             CartItem cartItem = CartItem.builder()

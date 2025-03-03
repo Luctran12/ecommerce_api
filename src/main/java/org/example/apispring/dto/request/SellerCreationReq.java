@@ -2,15 +2,15 @@ package org.example.apispring.dto.request;
 
 import lombok.Builder;
 import lombok.Data;
-import org.example.apispring.enums.Role;
 
 @Data
 @Builder
-public class UserCreationReq {
+public class SellerCreationReq {
     private String name;
-    private String accountName;
     private String email;
     private String password;
     private String phone;
     private String address;
+    private String districId;
+    private String wardCode;
 }

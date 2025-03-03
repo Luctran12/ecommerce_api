@@ -5,11 +5,9 @@ import lombok.Data;
 
 @Data
 @Builder
-public class StoreCreationReq {
-    private String name;
-    private String description;
+public class AddressUpdateReq {
+    private String userId;
     private String address;
     private String districtId;
     private String wardCode;
-    private String ownerId;
 }

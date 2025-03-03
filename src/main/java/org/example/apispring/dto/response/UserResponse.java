@@ -9,6 +9,7 @@ import org.example.apispring.model.User;
 @Data
 @Builder
 public class UserResponse {
+    private String id;
     private String name;
     private String email;
     private String phone;

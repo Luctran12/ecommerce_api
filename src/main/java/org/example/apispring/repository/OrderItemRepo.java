@@ -1,4 +1,9 @@
 package org.example.apispring.repository;
 
-public interface OrderItemRepo {
+import org.example.apispring.model.OrderItem;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface OrderItemRepo extends MongoRepository<OrderItem, String> {
 }
