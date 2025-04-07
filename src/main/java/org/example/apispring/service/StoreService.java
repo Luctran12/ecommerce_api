@@ -75,4 +75,8 @@ public class StoreService {
     public Store getByUserId(String userId) {
         return storeRepo.findByOwner_Id(userId);
     }
+
+    public StoreResponse getStoreById(String storeId) {
+        return storeMapper.toStoreResponse(storeRepo.findById(storeId).get());
+    }
 }

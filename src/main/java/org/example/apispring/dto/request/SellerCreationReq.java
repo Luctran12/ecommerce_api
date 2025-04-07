@@ -11,6 +11,6 @@ public class SellerCreationReq {
     private String password;
     private String phone;
     private String address;
-    private String districId;
-    private String wardCode;
+    private int districtId;
+    private int wardCode;
 }

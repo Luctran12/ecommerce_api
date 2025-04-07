@@ -14,5 +14,7 @@ public class UserResponse {
     private String email;
     private String phone;
     private String address;
+    private String districtId;
+    private String wardCode;
     private Role role;
 }

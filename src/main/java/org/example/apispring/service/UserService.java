@@ -73,7 +73,7 @@ public class UserService {
                 .password(sellerCreationReq.getPassword())
                 .role(Role.Seller)
                 .address(sellerCreationReq.getAddress())
-                .districtId(sellerCreationReq.getDistricId())
+                .districtId(sellerCreationReq.getDistrictId())
                 .wardCode(sellerCreationReq.getWardCode())
                 .name(sellerCreationReq.getName())
                 .phone(sellerCreationReq.getPhone())
@@ -84,8 +84,8 @@ public class UserService {
         StoreCreationReq store = StoreCreationReq.builder()
                 .name(user.getName())
                 .address(user.getAddress())
-                .districtId(user.getDistrictId())
-                .wardCode(user.getWardCode())
+                .districtId(sellerCreationReq.getDistrictId())
+                .wardCode(sellerCreationReq.getWardCode())
                 .ownerId(user.getId())
                 .build();
 

@@ -16,6 +16,10 @@ public class ProductCreationReq {
     private int stock;         // Số lượng trong kho
     private String storeId;       // ID của cửa hàng đăng bán sản phẩm
     private List<MultipartFile> images = new ArrayList<>();
+    private int height;
+    private int weight;
+    private int length;
+    private int width;
 
     // Cho phép chọn category có sẵn hoặc tạo mới
     private String categoryId;    // ID của category (nếu chọn từ danh sách có sẵn)

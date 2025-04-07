@@ -9,7 +9,7 @@ public class StoreCreationReq {
     private String name;
     private String description;
     private String address;
-    private String districtId;
-    private String wardCode;
+    private int districtId;
+    private int wardCode;
     private String ownerId;
 }

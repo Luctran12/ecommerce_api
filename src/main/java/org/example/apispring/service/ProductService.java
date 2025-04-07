@@ -81,6 +81,10 @@ public class ProductService {
         product.setDescription(req.getDescription());
         product.setPrice(req.getPrice());
         product.setStock(req.getStock());
+        product.setHeight(req.getHeight());
+        product.setWeight(req.getWeight());
+        product.setWidth(req.getWidth());
+        product.setLength(req.getLength());
         product.setStore(store);
         product.setCategory(category); // Gán category đã tìm được hoặc mới tạo
 

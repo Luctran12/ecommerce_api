@@ -11,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "orders")
 public class Order {
     @Id
@@ -22,6 +23,7 @@ public class Order {
     @DBRef
     private List<OrderItem> items;
 
+    private String address;
     private double totalPrice;
     private OrderStatus status; // "Pending", "Processing", "Shipped", "Delivered"
     private Date orderDate;

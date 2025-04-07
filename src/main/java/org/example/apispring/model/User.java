@@ -26,7 +26,7 @@ public class User {
     private String password;
     private String phone;
     private String address;
-    private String districtId;
-    private String wardCode;
+    private int districtId;
+    private int wardCode;
     private Role role;
 }

@@ -36,5 +36,10 @@ public class StoreController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    public ApiResponse<StoreResponse> getStoreById(@PathVariable String id) {
+        return ApiResponse.<StoreResponse>builder().data(storeService.getStoreById(id)).build();
+    }
+
 
 }

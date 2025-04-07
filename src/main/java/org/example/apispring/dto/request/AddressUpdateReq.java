@@ -8,6 +8,6 @@ import lombok.Data;
 public class AddressUpdateReq {
     private String userId;
     private String address;
-    private String districtId;
-    private String wardCode;
+    private int districtId;
+    private int wardCode;
 }

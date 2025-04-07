@@ -1,5 +1,6 @@
 package org.example.apispring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,13 +23,14 @@ public class Store {
     private String name;
     private String description;
     private String address;
-    private String districtId;
-    private String wardCode;
+    private int districtId;
+    private int wardCode;
 
     @DBRef
     private User owner; // Chủ cửa hàng
 
     @DBRef(lazy = true)
+    @JsonIgnore
     private List<Product> products = new ArrayList<>(); // Danh sách sản phẩm của cửa hàng
 }
 
