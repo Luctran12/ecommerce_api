@@ -1,6 +1,8 @@
 package org.example.apispring.service;
 
+import org.example.apispring.config.JwtUtils;
 import org.example.apispring.dto.request.*;
+import org.example.apispring.dto.response.JwtResponse;
 import org.example.apispring.dto.response.StoreResponse;
 import org.example.apispring.dto.response.UserResponse;
 import org.example.apispring.enums.Role;
@@ -10,6 +12,11 @@ import org.example.apispring.model.User;
 import org.example.apispring.repository.StoreRepo;
 import org.example.apispring.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,6 +24,15 @@ import java.util.List;
 
 @Service
 public class UserService {
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserRepo userRepo;
 
@@ -38,6 +54,7 @@ public class UserService {
 
     public UserResponse save(UserCreationReq userReq) {
         User user = userMapper.toUser(userReq);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         if (userRepo.findByAccountName(userReq.getAccountName()) != null) throw new RuntimeException("User already exists");
 
         user.setRole(Role.User);
@@ -48,13 +65,18 @@ public class UserService {
         return  userMapper.toUserResponse(userRepo.findById(id).get());
     }
 
-    public UserResponse login(UserLoginReq userLoginReq) {
-        User user = userRepo.findByAccountName(userLoginReq.getAccountName());
-        if (user == null) throw new RuntimeException("User not found");
-        if (!user.getPassword().equals(userLoginReq.getPassword())) {
-            throw new RuntimeException("Incorrect password");
+    public JwtResponse login(UserLoginReq userLoginReq) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userLoginReq.getAccountName(), userLoginReq.getPassword())
+            );
+            String id = userRepo.findByAccountName(userLoginReq.getAccountName()).getId();
+            String token = jwtUtils.generateJwtToken(authentication, id);
+            return new JwtResponse(token);
+
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Sai tên đăng nhập hoặc mật khẩu");
         }
-        return userMapper.toUserResponse(user);
     }
 
     public void addressUpdate(AddressUpdateReq addressUpdateReq) {

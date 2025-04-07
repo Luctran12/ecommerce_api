@@ -6,6 +6,7 @@ import org.example.apispring.dto.request.AddressUpdateReq;
 import org.example.apispring.dto.request.SellerCreationReq;
 import org.example.apispring.dto.request.UserCreationReq;
 import org.example.apispring.dto.request.UserLoginReq;
+import org.example.apispring.dto.response.JwtResponse;
 import org.example.apispring.dto.response.StoreResponse;
 import org.example.apispring.dto.response.UserResponse;
 import org.example.apispring.model.Store;
@@ -47,8 +48,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ApiResponse<UserResponse> login(@RequestBody UserLoginReq userLoginReq) {
-        return ApiResponse.<UserResponse>builder()
+    public ApiResponse<JwtResponse> login(@RequestBody UserLoginReq userLoginReq) {
+        return ApiResponse.<JwtResponse>builder()
                 .data(userService.login(userLoginReq))
                 .build();
     }
