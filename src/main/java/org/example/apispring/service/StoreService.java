@@ -79,4 +79,13 @@ public class StoreService {
     public StoreResponse getStoreById(String storeId) {
         return storeMapper.toStoreResponse(storeRepo.findById(storeId).get());
     }
+
+    public List<StoreResponse> getAllStores() {
+        List<Store> stores = storeRepo.findAll();
+        List<StoreResponse> storeResponses = new ArrayList<>();
+        for (Store store : stores) {
+            storeResponses.add(storeMapper.toStoreResponse(store));
+        }
+        return storeResponses;
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/shop/store")
@@ -41,5 +42,9 @@ public class StoreController {
         return ApiResponse.<StoreResponse>builder().data(storeService.getStoreById(id)).build();
     }
 
+    @GetMapping("")
+    public ApiResponse<List<StoreResponse>> getAllStores() {
+        return ApiResponse.<List<StoreResponse>>builder().data(storeService.getAllStores()).build();
+    }
 
 }

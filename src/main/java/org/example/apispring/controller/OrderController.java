@@ -1,7 +1,9 @@
 package org.example.apispring.controller;
 
 import org.example.apispring.dto.request.OrderCreationReq;
+import org.example.apispring.dto.response.OrderItemResponse;
 import org.example.apispring.model.Order;
+import org.example.apispring.model.OrderItem;
 import org.example.apispring.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -24,4 +26,10 @@ public class OrderController {
     public List<Order> getOrderByUserId(@PathVariable String id) {
         return orderService.findByUserId(id);
     }
+
+    @GetMapping("/byStore/{storeId}")
+    public List<OrderItemResponse> getByStoreId(@PathVariable String storeId) {
+        return orderService.findByStoreId(storeId);
+    }
 }
+

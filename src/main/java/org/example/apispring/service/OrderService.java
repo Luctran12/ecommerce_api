@@ -1,8 +1,11 @@
 package org.example.apispring.service;
 
+import org.bson.types.ObjectId;
 import org.example.apispring.dto.request.OrderCreationReq;
 import org.example.apispring.dto.request.OrderItemCreationReq;
+import org.example.apispring.dto.response.OrderItemResponse;
 import org.example.apispring.enums.OrderStatus;
+import org.example.apispring.mapper.OrderItemMapper;
 import org.example.apispring.mapper.OrderMapper;
 import org.example.apispring.model.Order;
 import org.example.apispring.model.OrderItem;
@@ -16,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -37,6 +41,9 @@ public class OrderService {
 
     @Autowired
     private ProductRepo productRepo;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
 
     public List<Order> findAll() {
         return orderRepo.findAll();
@@ -75,5 +82,22 @@ public class OrderService {
 
     public List<Order> findByUserId(String userId) {
         return orderRepo.findByUser_Id(userId);
+    }
+
+    public List<OrderItemResponse> findByStoreId(String storeId) {
+        List<Product> products = productRepo.findByStore_Id(storeId);
+        System.out.println(products);
+        List<String> productIds = products.stream()
+                .map(Product::getId)
+                .collect(Collectors.toList());
+        System.out.println(productIds);
+        List<OrderItem> items = orderItemRepo.findByProductIn(productIds);
+        System.out.println(items);
+        List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+        for(OrderItem order : items) {
+            OrderItemResponse orderItemResponse = orderItemMapper.toOrderItemResponse(order);
+            orderItemResponses.add(orderItemResponse);
+        }
+        return orderItemResponses;
     }
 }

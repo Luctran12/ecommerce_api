@@ -68,8 +68,8 @@ public class UserController {
     }
 
     @PostMapping("/seller/login")
-    public ApiResponse<Store> sellerLogin(@RequestBody UserLoginReq userLoginReq) {
-        return ApiResponse.<Store>builder()
+    public ApiResponse<JwtResponse> sellerLogin(@RequestBody UserLoginReq userLoginReq) {
+        return ApiResponse.<JwtResponse>builder()
                 .data(userService.sellerLogin(userLoginReq))
                 .build();
     }

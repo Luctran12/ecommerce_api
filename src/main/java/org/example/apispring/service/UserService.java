@@ -40,6 +40,9 @@ public class UserService {
     private StoreService storeSerivce;
 
     @Autowired
+    private StoreRepo storeRepo;
+
+    @Autowired
     private UserMapper userMapper;
 
     public List<UserResponse> findAll() {
@@ -91,8 +94,9 @@ public class UserService {
         if(userRepo.findByEmail(sellerCreationReq.getEmail()) != null) throw new RuntimeException("User already exists");
 
         User user = User.builder()
+                .accountName(sellerCreationReq.getEmail())
                 .email(sellerCreationReq.getEmail())
-                .password(sellerCreationReq.getPassword())
+                .password(passwordEncoder.encode(sellerCreationReq.getPassword()))
                 .role(Role.Seller)
                 .address(sellerCreationReq.getAddress())
                 .districtId(sellerCreationReq.getDistrictId())
@@ -114,10 +118,23 @@ public class UserService {
         return storeSerivce.createStore(store);
     }
 
-    public Store sellerLogin(UserLoginReq userLoginReq) {
-        User user = userRepo.findByEmail(userLoginReq.getAccountName());
-        if(user == null) throw new RuntimeException("User not found");
-        if (!user.getPassword().equals(userLoginReq.getPassword())) throw new RuntimeException("Incorrect password");
-        return storeSerivce.getByUserId(user.getId());
+    public JwtResponse sellerLogin(UserLoginReq userLoginReq) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(userLoginReq.getAccountName(), userLoginReq.getPassword())
+            );
+            String userId = userRepo.findByAccountName(userLoginReq.getAccountName()).getId();
+            String id = storeRepo.findByOwner_Id(userId).getId();
+            String token = jwtUtils.generateJwtToken(authentication, id);
+            return new JwtResponse(token);
+
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException("Sai tên đăng nhập hoặc mật khẩu");
+        }
+
+//        User user = userRepo.findByEmail(userLoginReq.getAccountName());
+//        if(user == null) throw new RuntimeException("User not found");
+//        if (!user.getPassword().equals(userLoginReq.getPassword())) throw new RuntimeException("Incorrect password");
+//        return storeSerivce.getByUserId(user.getId());
     }
 }
