@@ -31,5 +31,15 @@ public class OrderController {
     public List<OrderItemResponse> getByStoreId(@PathVariable String storeId) {
         return orderService.findByStoreId(storeId);
     }
+
+    @PutMapping("/{orderId}/{status}")
+    public Order updateOrderStatus(@PathVariable String orderId, @PathVariable String status) {
+        return orderService.updateOrderStatus(orderId,status);
+    }
+
+    @PutMapping("/item/{itemId}/{status}")
+    public OrderItemResponse changeItemStatus(@PathVariable String itemId, @PathVariable String status) {
+        return orderService.changeItemStatus(itemId, status);
+    }
 }
 

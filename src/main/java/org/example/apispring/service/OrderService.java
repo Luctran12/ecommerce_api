@@ -62,6 +62,7 @@ public class OrderService {
             orderItem.setProduct(product);
             orderItem.setQuantity(item.getQuantity());
             orderItem.setPrice(item.getPrice());
+            orderItem.setStatus(OrderStatus.Pending);
             orderItems.add(orderItem);
             orderItemRepo.save(orderItem);
 
@@ -99,5 +100,17 @@ public class OrderService {
             orderItemResponses.add(orderItemResponse);
         }
         return orderItemResponses;
+    }
+
+    public OrderItemResponse changeItemStatus(String orderItemId, String status) {
+        OrderItem orderItem = orderItemRepo.findById(orderItemId).get();
+        orderItem.setStatus(OrderStatus.valueOf(status));
+        return orderItemMapper.toOrderItemResponse(orderItemRepo.save(orderItem));
+    }
+
+    public Order updateOrderStatus(String orderId, String status) {
+        Order order = orderRepo.findById(orderId).get();
+        order.setStatus(OrderStatus.valueOf(status));
+        return orderRepo.save(order);
     }
 }

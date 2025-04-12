@@ -1,6 +1,7 @@
 package org.example.apispring.model;
 
 import lombok.*;
+import org.example.apispring.enums.OrderStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -18,5 +19,7 @@ public class OrderItem {
 
     private int quantity;
     private double price;
+
+    private OrderStatus status; // "Pending", "Processing", "Shipped", "Delivered"
 }
 
