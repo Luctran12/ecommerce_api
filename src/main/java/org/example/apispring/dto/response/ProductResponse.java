@@ -20,4 +20,5 @@ public class ProductResponse {
     private String storeId;
     private int stock;
     private double rating;
+    private int sold = 0;
 }

@@ -37,4 +37,6 @@ public class Product {
     private int stock; // Số lượng tồn kho
     @Nullable
     private double rating; // Trung bình đánh giá
+
+    private int sold = 0;
 }

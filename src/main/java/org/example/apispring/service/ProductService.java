@@ -133,6 +133,7 @@ public class ProductService {
                 .category(product.getCategory())
                 .imageUrl(product.getImageUrl())
                 .rating(product.getRating())
+                .sold(product.getSold())
                 .build());
     }
 
