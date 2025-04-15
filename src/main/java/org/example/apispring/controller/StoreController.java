@@ -3,6 +3,8 @@ package org.example.apispring.controller;
 import org.example.apispring.dto.ApiResponse;
 import org.example.apispring.dto.request.ProductCreationReq;
 import org.example.apispring.dto.request.StoreCreationReq;
+import org.example.apispring.dto.request.StoreUpdateReq;
+import org.example.apispring.dto.response.StoreInforResponse;
 import org.example.apispring.dto.response.StoreResponse;
 import org.example.apispring.service.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,4 +49,20 @@ public class StoreController {
         return ApiResponse.<List<StoreResponse>>builder().data(storeService.getAllStores()).build();
     }
 
+    @GetMapping("infor/{storeId}")
+    public ApiResponse<StoreInforResponse> getStoreInfor(@PathVariable String storeId) {
+        return ApiResponse.<StoreInforResponse>builder()
+                .data(storeService.getInforByStoreId(storeId))
+                .build();
+    }
+
+    @PutMapping("/{storeId}")
+    public ApiResponse<StoreResponse> updateStore(
+            @PathVariable String storeId,
+            @ModelAttribute StoreUpdateReq req
+    ) throws IOException {
+        return ApiResponse.<StoreResponse>builder()
+                .data(storeService.updateStore(req, storeId))
+                .build();
+    }
 }

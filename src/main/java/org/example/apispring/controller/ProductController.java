@@ -47,8 +47,8 @@ public class ProductController {
                 .build();
     }
 
-    @PutMapping("/update")
-    public ApiResponse<ProductResponse> update(@RequestBody ProductUpdateReq product) {
+    @PutMapping("/{productId}")
+    public ApiResponse<ProductResponse> update(@ModelAttribute ProductUpdateReq product, @PathVariable String productId) {
         return ApiResponse.<ProductResponse>builder()
                 .data(productService.updateProduct(product))
                 .build();

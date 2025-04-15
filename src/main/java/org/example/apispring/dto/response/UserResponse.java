@@ -17,4 +17,5 @@ public class UserResponse {
     private String districtId;
     private String wardCode;
     private Role role;
+    private String imageUrl;
 }

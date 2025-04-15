@@ -2,9 +2,13 @@ package org.example.apispring.service;
 
 import org.example.apispring.dto.request.ProductCreationReq;
 import org.example.apispring.dto.request.StoreCreationReq;
+import org.example.apispring.dto.request.StoreUpdateReq;
+import org.example.apispring.dto.response.OrderItemResponse;
+import org.example.apispring.dto.response.StoreInforResponse;
 import org.example.apispring.dto.response.StoreResponse;
 import org.example.apispring.enums.Role;
 import org.example.apispring.mapper.StoreMapper;
+import org.example.apispring.model.OrderItem;
 import org.example.apispring.model.Product;
 import org.example.apispring.model.Store;
 import org.example.apispring.model.User;
@@ -35,6 +39,12 @@ public class StoreService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     public StoreResponse createStore(StoreCreationReq storeReq) {
         //kiem tra user co ton tai
@@ -87,5 +97,45 @@ public class StoreService {
             storeResponses.add(storeMapper.toStoreResponse(store));
         }
         return storeResponses;
+    }
+
+    public StoreInforResponse getInforByStoreId(String storeId) {
+        StoreInforResponse storeInforResponse = new StoreInforResponse();
+        Store store = storeRepo.findById(storeId).get();
+        List<OrderItemResponse> items = orderService.findByStoreId(storeId);
+        double total = 0;
+        for (OrderItemResponse orderItemResponse : items) {
+            total += orderItemResponse.getProduct().getPrice();
+        }
+
+        storeInforResponse.setProducts(store.getProducts());
+        storeInforResponse.setTotalProducts(store.getProducts().size());
+        storeInforResponse.setTotalOrders(items.size());
+        storeInforResponse.setOrderItems(items);
+        storeInforResponse.setReceipts(total);
+        return storeInforResponse;
+    }
+
+    public StoreResponse updateStore(StoreUpdateReq storeReq, String storeId) throws IOException {
+        Store store = storeRepo.findById(storeId).orElseThrow(() -> new RuntimeException("Store not found with ID: " + storeId));
+        if(storeReq.getName() != null && !storeReq.getName().isEmpty()) {
+            store.setName(storeReq.getName());
+        }
+        if(storeReq.getAddress() != null && !storeReq.getAddress().isEmpty()) {
+            store.setAddress(storeReq.getAddress());
+        }
+        if(storeReq.getBackground() != null && !storeReq.getBackground().isEmpty()) {
+            String bg = fileStorageService.uploadImage(storeReq.getBackground());
+            store.setBackgroundUrl(bg);
+        }
+        if(storeReq.getDescription() != null && !storeReq.getDescription().isEmpty()) {
+            store.setDescription(storeReq.getDescription());
+        }
+        if(storeReq.getAvatar() != null && !storeReq.getAvatar().isEmpty()) {
+            String av = fileStorageService.uploadImage(storeReq.getAvatar());
+            store.setBackgroundUrl(av);
+        }
+
+        return storeMapper.toStoreResponse(storeRepo.save(store));
     }
 }

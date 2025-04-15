@@ -2,10 +2,7 @@ package org.example.apispring.controller;
 
 import com.cloudinary.Api;
 import org.example.apispring.dto.ApiResponse;
-import org.example.apispring.dto.request.AddressUpdateReq;
-import org.example.apispring.dto.request.SellerCreationReq;
-import org.example.apispring.dto.request.UserCreationReq;
-import org.example.apispring.dto.request.UserLoginReq;
+import org.example.apispring.dto.request.*;
 import org.example.apispring.dto.response.JwtResponse;
 import org.example.apispring.dto.response.StoreResponse;
 import org.example.apispring.dto.response.UserResponse;
@@ -15,7 +12,9 @@ import org.example.apispring.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -73,4 +72,16 @@ public class UserController {
                 .data(userService.sellerLogin(userLoginReq))
                 .build();
     }
+
+    @PutMapping("/{userId}")
+    public ApiResponse<UserResponse> updateUserInfor(
+            @ModelAttribute UserUpdateReq req,
+            @PathVariable String userId
+    ) throws IOException {
+        return ApiResponse.<UserResponse>builder()
+                .data(userService.update(req, userId))
+                .build();
+    }
+
+
 }

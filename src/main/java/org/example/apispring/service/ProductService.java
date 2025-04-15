@@ -142,8 +142,8 @@ public class ProductService {
         return productMapper.toProductDetailResponse(product);
     }
 
-    public ProductResponse updateProduct(ProductUpdateReq req) {
-        Product product = productRepo.findById(req.getId()).orElseThrow(() -> new RuntimeException("Product not found"));
+    public ProductResponse updateProduct(ProductUpdateReq req, String productId) throws IOException {
+        Product product = productRepo.findById(productId).orElseThrow(() -> new RuntimeException("Product not found"));
         if(req.getName() != null && !req.getName().isEmpty()) {
             product.setName(req.getName());
         }
@@ -157,7 +157,11 @@ public class ProductService {
             product.setPrice(req.getPrice());
         }
         if(req.getImage() != null && !req.getImage().isEmpty()) {
-            product.setImageUrl(req.getImage());
+            List<String> images = new ArrayList<>();
+            for(MultipartFile imageFile : req.getImage()) {
+                images.add(fileStorageService.uploadImage(imageFile));
+            }
+            product.setImageUrl(images);
         }
         productRepo.save(product);
         return productMapper.toProductResponse(product);

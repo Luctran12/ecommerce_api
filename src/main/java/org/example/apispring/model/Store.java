@@ -25,6 +25,8 @@ public class Store {
     private String address;
     private int districtId;
     private int wardCode;
+    private String avatarUrl;
+    private String backgroundUrl;
 
     @DBRef
     private User owner; // Chủ cửa hàng

@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
+import java.util.Date;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,5 +23,9 @@ public class OrderItem {
     private double price;
 
     private OrderStatus status; // "Pending", "Processing", "Shipped", "Delivered"
+
+    private String address;
+
+    private Date date;
 }
 

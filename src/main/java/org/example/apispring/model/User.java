@@ -29,4 +29,5 @@ public class User {
     private int districtId;
     private int wardCode;
     private Role role;
+    private String imageUrl;
 }

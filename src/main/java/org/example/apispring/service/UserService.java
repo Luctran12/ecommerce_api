@@ -18,7 +18,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +46,9 @@ public class UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     public List<UserResponse> findAll() {
         List<User> users = userRepo.findAll();
@@ -74,7 +79,9 @@ public class UserService {
                     new UsernamePasswordAuthenticationToken(userLoginReq.getAccountName(), userLoginReq.getPassword())
             );
             String id = userRepo.findByAccountName(userLoginReq.getAccountName()).getId();
-            String token = jwtUtils.generateJwtToken(authentication, id);
+            String userName = userRepo.findByAccountName(userLoginReq.getAccountName()).getName();
+            String image = userRepo.findByAccountName(userLoginReq.getAccountName()).getImageUrl();
+            String token = jwtUtils.generateJwtToken(authentication, id, userName, image);
             return new JwtResponse(token);
 
         } catch (BadCredentialsException e) {
@@ -125,7 +132,8 @@ public class UserService {
             );
             String userId = userRepo.findByAccountName(userLoginReq.getAccountName()).getId();
             String id = storeRepo.findByOwner_Id(userId).getId();
-            String token = jwtUtils.generateJwtToken(authentication, id);
+            String image = storeRepo.findByOwner_Id(userId).getAvatarUrl();
+            String token = jwtUtils.generateJwtToken(authentication, id, null, image);
             return new JwtResponse(token);
 
         } catch (BadCredentialsException e) {
@@ -136,5 +144,31 @@ public class UserService {
 //        if(user == null) throw new RuntimeException("User not found");
 //        if (!user.getPassword().equals(userLoginReq.getPassword())) throw new RuntimeException("Incorrect password");
 //        return storeSerivce.getByUserId(user.getId());
+    }
+
+    public UserResponse update(UserUpdateReq req, String userId) throws IOException {
+        String imageUrl = new String("");
+        if(req.getImage() != null)
+            imageUrl = fileStorageService.uploadImage(req.getImage());
+
+
+        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        if (req.getAccountName() != null && !req.getAccountName().isEmpty()) {
+            user.setAccountName(req.getAccountName());
+        }
+
+        if (req.getEmail() != null && !req.getEmail().isEmpty()) {
+            user.setEmail(req.getEmail());
+        }
+
+        if (req.getPhone() != null && !req.getPhone().isEmpty()) {
+            user.setPhone(req.getPhone());
+        }
+
+        if (req.getName() != null && !req.getName().isEmpty()) {
+            user.setName(req.getName());
+        }
+        user.setImageUrl(imageUrl);
+        return userMapper.toUserResponse(userRepo.save(user));
     }
 }

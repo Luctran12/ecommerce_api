@@ -15,4 +15,6 @@ public class StoreResponse {
     private int districtId;
     private int wardCode;
     private List<ProductResponse> products;
+    private String avatarUrl;
+    private String backgroundUrl;
 }

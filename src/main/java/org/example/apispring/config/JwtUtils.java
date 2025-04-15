@@ -20,7 +20,7 @@ public class JwtUtils {
         this.userDetailsServiceImpl = userDetailsServiceImpl;
     }
 
-    public String generateJwtToken(Authentication auth, String id) {
+    public String generateJwtToken(Authentication auth, String id, String userName, String image) {
         Map<String, Object> claims = new HashMap<>();
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
@@ -30,11 +30,13 @@ public class JwtUtils {
                 .collect(Collectors.toList());
         claims.put("roles", roles);
         claims.put("userId", id);
+        claims.put("image", image);
 
         return Jwts.builder()
                 .claim("userId", id)
+                .claim("image", image)
                 .setClaims(claims)
-                .setSubject(auth.getName())
+                .setSubject(userName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
